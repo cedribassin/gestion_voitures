@@ -31,7 +31,8 @@ class VoitureController extends AbstractController
         );
         return $this->render('voiture/voitures.html.twig', [
             "voitures"=>$voitures,
-            "form"=>$form->createView()
+            "form"=>$form->createView(),
+            "admin"=>false
         ]);
     }
 }

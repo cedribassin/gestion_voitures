@@ -3,6 +3,9 @@
 {% block title %}Voitures{% endblock %}
 {% block monTitre %}Liste des voitures{% endblock %}
 {% block body %}
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{message}}</div>
+{% endfor %}
 {{ form_start(form) }}
 <div class="row no-gutters align-items-center text center">
     <div class="col">
@@ -15,8 +18,10 @@
         <input type="submit" value="rechercher" class="btn btn-info">
     </div>
 </div>
-{{form_widget(form)}}
 {{ form_end(form)}}
+{% if admin %}
+    <a href="{{path('ajoutVoiture')}}" class="d-block btn btn-success p-2 m-1">Ajout</a>
+{% endif %}
 <div class="row no-gutters">
     {% for voiture in voitures %}
         <div class="col-12 col-lg-6 p-1">
@@ -37,9 +42,23 @@
                            </p>
                         </div>
                     </div>
+                    {% if admin %}
+                    <div class="row no-gutters">
+                        <a href="{{path('modifVoiture', {'id': voiture.id})}}" class="col btn btn-warning p-2 m-1">Modifier</a>
+                        <form method="POST" action="{{path('suppressionVoiture', {'id': voiture.id })}}" style="display:inline-block" onsubmit="return confirm('Confirmer la suppression ?')">
+                            <!--On rajoutant la ligne suivants, on va pouvoir tester dans le controller sur quelle méthode
+                            on veut recevoir les informations (CF dans les routes de la fonction suppressionVoiture())-->
+                            <input type="hidden" name="_method" value="delete">
+                            <!-- On rajoute un token pour sécuriser la supression avec la fonction twig csrf_token(), SUP correspond 
+                            à une valeur que l'on a définit, ça aurait pu être autre chose... -->
+                            <input type="hidden" name="_token" value="{{csrf_token('SUP' ~ voiture.id)}}">
+                            <input type="submit" class="col btn btn-danger p-2 m-1" value="supprimer">
+                        </form>                    
+                    </div>  
+                    {% endif %}          
+                </div>
                 </div>
             </div>
-        </div>
     {% endfor %}
 </div>
 <div class="navigation">
